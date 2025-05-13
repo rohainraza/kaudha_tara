@@ -42,8 +42,8 @@ export default function LoginScreen() {
             onChangeText={setPassword}
           />
 
-          {/* ✅ Navigate to Home_page when Login is pressed */}
-          <Link href="/(tabs)/Home_page" asChild>
+          {/* ✅ Navigate to Home when Login is pressed */}
+          <Link href="/(tabs)/Home" asChild>
             <TouchableOpacity style={styles.button}>
               <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
