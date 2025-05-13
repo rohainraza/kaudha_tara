@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.kaudha-tara"
+      "bundleIdentifier": "com.anonymous.kaudha-tara",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We need access to your location to show it on the map."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +21,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.kaudha_tara"
+      "package": "com.anonymous.kaudha_tara",
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
     },
     "web": {
       "bundler": "metro",
