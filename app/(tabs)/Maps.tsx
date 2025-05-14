@@ -1,40 +1,78 @@
-import React from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Dimensions, StyleSheet, View } from 'react-native';
+import MapView, { Marker, Region } from 'react-native-maps';
 
 const MapsPage = () => {
-  // Default region for the map, you can change the coordinates
-  const initialRegion = {
-    latitude: 37.78825, // Default latitude (e.g., San Francisco)
-    longitude: -122.4324, // Default longitude
-    latitudeDelta: 0.0922, // Zoom level
-    longitudeDelta: 0.0421, // Zoom level
-  };
+  const [region, setRegion] = useState<Region | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      // Request permission
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Location permission is required to use this feature.');
+        setRegion({
+          latitude: -37.8136, // Melbourne fallback
+          longitude: 144.9631,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Get current location
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+
+      setRegion({
+        latitude,
+        longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      });
+
+      setLoading(false);
+    })();
+  }, []);
+
+  if (loading || !region) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <MapView
         style={styles.map}
-        initialRegion={initialRegion}
-        showsUserLocation={true} // Show the user's location (optional)
+        region={region}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
       >
-        {/* Add a marker to the map */}
-        <Marker coordinate={{ latitude: 37.78825, longitude: -122.4324 }} title="My Location" />
+        <Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }} title="You are here" />
       </MapView>
     </View>
   );
 };
 
+export default MapsPage;
+
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  map: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+  },
+  loaderContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  map: {
-    width: Dimensions.get('window').width, // Full screen width
-    height: Dimensions.get('window').height, // Full screen height
-  },
 });
-
-export default MapsPage;
