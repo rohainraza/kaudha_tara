@@ -1,11 +1,12 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-
-const app = express();
+const path = require('path');
 const db = require('./models');
 
-// Global crash & shutdown handlers
+const app = express();
+
+// ---------- Crash & Exit Handlers ----------
 process.on('uncaughtException', (err) => {
   console.error('UNCAUGHT EXCEPTION:', err.stack || err);
 });
@@ -24,30 +25,34 @@ process.on('SIGINT', () => {
   process.exit(0);
 });
 
-// Middleware
+// ---------- Middleware ----------
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// ---------- Serve Static Audio ----------
+app.use('/audios', express.static(path.join(__dirname, 'public/audios')));
+
+// ---------- Routes ----------
 app.use('/api', require('./routes/signup'));
+app.use('/alphabets', require('./routes/alphabets')); // New route
 
-// Sequelize connection
-db.sequelize.sync()
+// ---------- Sync DB and Start Server ----------
+db.sequelize.sync({ alter: true })
   .then(() => {
-    console.log('Tables synced');
+    console.log('Tables synced ✅');
 
-    // Keep DB alive every 4 seconds
+    // Optional DB keep-alive (safe for idle connections)
     setInterval(() => {
       db.sequelize.query('SELECT 1')
         .then(() => console.log('DB connection alive'))
-        .catch(err => console.error('DB keep-alive failed:', err.message));
+        .catch(err => console.error('Keep-alive error:', err.message));
     }, 4000000);
 
     const PORT = process.env.PORT || 8000;
-      app.listen(PORT, '0.0.0.0', () => {
-      console.log(`Server running on port ${PORT}`);
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Server running at http://localhost:${PORT}`);
     });
   })
   .catch(err => {
-    console.error('Sequelize sync error:', err);
+    console.error('❌ Sequelize sync error:', err);
   });
