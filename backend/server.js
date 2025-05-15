@@ -17,7 +17,7 @@ app.use('/audios', express.static(path.join(__dirname, 'public/audios')));
 app.use('/api', require('./routes/signup'));
 app.use('/alphabets', require('./routes/alphabets'));
 app.use('/progress', require('./routes/progress')); // Route moved after middleware
-
+app.use('/api/users/location', require('./routes/location'));
 // ---------- Crash & Exit Handlers ----------
 process.on('uncaughtException', (err) => {
   console.error('UNCAUGHT EXCEPTION:', err.stack || err);
