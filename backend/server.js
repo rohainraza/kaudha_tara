@@ -6,6 +6,18 @@ const db = require('./models');
 
 const app = express();
 
+// ---------- Middleware (Must come before routes) ----------
+app.use(cors());
+app.use(express.json()); // Needed to parse JSON from POST requests
+
+// ---------- Serve Static Audio ----------
+app.use('/audios', express.static(path.join(__dirname, 'public/audios')));
+
+// ---------- Routes ----------
+app.use('/api', require('./routes/signup'));
+app.use('/alphabets', require('./routes/alphabets'));
+app.use('/progress', require('./routes/progress')); // Route moved after middleware
+
 // ---------- Crash & Exit Handlers ----------
 process.on('uncaughtException', (err) => {
   console.error('UNCAUGHT EXCEPTION:', err.stack || err);
@@ -25,23 +37,11 @@ process.on('SIGINT', () => {
   process.exit(0);
 });
 
-// ---------- Middleware ----------
-app.use(cors());
-app.use(express.json());
-
-// ---------- Serve Static Audio ----------
-app.use('/audios', express.static(path.join(__dirname, 'public/audios')));
-
-// ---------- Routes ----------
-app.use('/api', require('./routes/signup'));
-app.use('/alphabets', require('./routes/alphabets')); // New route
-
 // ---------- Sync DB and Start Server ----------
 db.sequelize.sync({ alter: true })
   .then(() => {
-    console.log('Tables synced ✅');
+    console.log('Tables synced');
 
-    // Optional DB keep-alive (safe for idle connections)
     setInterval(() => {
       db.sequelize.query('SELECT 1')
         .then(() => console.log('DB connection alive'))
@@ -50,9 +50,9 @@ db.sequelize.sync({ alter: true })
 
     const PORT = process.env.PORT || 8000;
     app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 Server running at http://localhost:${PORT}`);
+      console.log(`Server running at http://localhost:${PORT}`);
     });
   })
   .catch(err => {
-    console.error('❌ Sequelize sync error:', err);
+    console.error('Sequelize sync error:', err);
   });
