@@ -2,10 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native';
 import MapView, { Marker, UrlTile, Region } from 'react-native-maps';
 import * as Location from 'expo-location';
+import axios from 'axios';
+
+type UserLocation = {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+};
 
 const MapsPage = () => {
   const [region, setRegion] = useState<Region | null>(null);
   const [loading, setLoading] = useState(true);
+  const [otherUsers, setOtherUsers] = useState<UserLocation[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -15,24 +24,39 @@ const MapsPage = () => {
         return;
       }
 
-      // Set initial location
+      // Get initial location
       const location = await Location.getCurrentPositionAsync({});
       const { latitude, longitude } = location.coords;
       updateRegion(latitude, longitude);
 
-      // Track location in real time
+      // Track real-time location
       await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
-          timeInterval: 3000, // every 3 sec
-          distanceInterval: 5, // or every 5 meters
+          timeInterval: 3000,
+          distanceInterval: 5,
         },
-        (loc) => {
+        async (loc) => {
           const { latitude, longitude } = loc.coords;
           updateRegion(latitude, longitude);
+
+          // Send to backend
+          try {
+            await axios.post('http://localhost:5000/api/users/location', {
+              userId: 'user1', // Replace with actual user ID from auth
+              name: 'Alice',   // Replace with real user name
+              latitude,
+              longitude,
+            });
+          } catch (err) {
+            const error = err as Error;
+            console.log("Failed to send location:", error.message);
+          }
         }
       );
 
+      // Fetch other users
+      await fetchOtherUsers();
       setLoading(false);
     })();
   }, []);
@@ -44,6 +68,16 @@ const MapsPage = () => {
       latitudeDelta: 0.01,
       longitudeDelta: 0.01,
     });
+  };
+
+  const fetchOtherUsers = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/users/location');
+      setOtherUsers(response.data);
+    } catch (err) {
+      const error = err as Error;
+      console.log('Failed to fetch other users:', error.message);
+    }
   };
 
   if (loading || !region) {
@@ -58,7 +92,7 @@ const MapsPage = () => {
     <View style={styles.container}>
       <MapView
         style={styles.map}
-        region={region} // ✅ LIVE tracking
+        region={region}
         showsUserLocation={true}
         showsMyLocationButton={true}
         zoomEnabled={true}
@@ -68,7 +102,19 @@ const MapsPage = () => {
           urlTemplate="http://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
           maximumZ={19}
         />
+
+        {/* Current user marker */}
         <Marker coordinate={region} title="You are here" />
+
+        {/* Other users */}
+        {otherUsers.map((user) => (
+          <Marker
+            key={user.id}
+            coordinate={{ latitude: user.latitude, longitude: user.longitude }}
+            title={user.name}
+            pinColor="blue"
+          />
+        ))}
       </MapView>
     </View>
   );
