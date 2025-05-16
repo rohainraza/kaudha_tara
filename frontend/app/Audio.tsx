@@ -1,87 +1,233 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons'; // For the speaker icon
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Pressable, FlatList } from 'react-native';
+import { Audio } from 'expo-av';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Dimensions } from 'react-native';
 
-const AudioPage = () => {
-  const [text, setText] = useState('');
+const { width } = Dimensions.get('window');
+const numColumns = 5;
+const keySize = (width - 40 - (numColumns - 1) * 12) / numColumns; // 40 = horizontal padding, 12 = margin between buttons
 
-  const handleTextChange = (input: string) => {
-    setText(input);
+
+const alphabets = [
+  {
+    kaudha: '𑄶',
+    maleSoundUrl: require('../assets/audios/male/00_0_sunnyo.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/00_0_sunnyo.mp3'),
+  },
+  {
+    kaudha: '𑄷',
+    maleSoundUrl: require('../assets/audios/male/00_1_ek.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/00_1_ek.mp3'),
+  },
+  {
+    kaudha: '𑄸',
+    maleSoundUrl: require('../assets/audios/male/00_2_dwi.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/00_2_dwi.mp3'),
+  },
+  {
+    kaudha: '𑄹',
+    maleSoundUrl: require('../assets/audios/male/00_3_tin.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/00_3_tin.mp3'),
+  },
+  {
+    kaudha: '𑄺',
+    maleSoundUrl: require('../assets/audios/male/00_4_cheir.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/00_4_cheir.mp3'),
+  },
+  {
+    kaudha: '𑄻',
+    maleSoundUrl: require('../assets/audios/male/00_5_paach.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/00_5_paach.mp3'),
+  },
+  {
+    kaudha: '𑄼',
+    maleSoundUrl: require('../assets/audios/male/00_6_chaw.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/00_6_chaw.mp3'),
+  },
+  {
+    kaudha: '𑄽',
+    maleSoundUrl: require('../assets/audios/male/00_7_saat.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/00_7_saat.mp3'),
+  },
+  {
+    kaudha: '𑄾',
+    maleSoundUrl: require('../assets/audios/male/00_8_aittyo.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/00_8_aittyo.mp3'),
+  },
+  {
+    kaudha: '𑄿',
+    maleSoundUrl: require('../assets/audios/male/00_9_naw.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/00_9_naw.mp3'),
+  },
+  {
+    kaudha: '𑄃',
+    maleSoundUrl: require('../assets/audios/male/01_01_pich_pujo_aa.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/01_01_pich_pujo_aa.mp3'),
+  },
+  {
+    kaudha: '𑄄',
+    maleSoundUrl: require('../assets/audios/male/01_02_dheil_bhanga_e.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/01_02_dheil_bhanga_e.mp3'),
+  },
+  {
+    kaudha: '𑄅',
+    maleSoundUrl: require('../assets/audios/male/01_03_bochchi_u.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/01_03_bochchi_u.mp3'),
+  },
+  {
+    kaudha: '𑄆',
+    maleSoundUrl: require('../assets/audios/male/01_04_lejubo_e.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/01_04_lejubo_e.mp3'),
+  },
+  {
+    kaudha: '𑄿',
+    maleSoundUrl: require('../assets/audios/male/01_05_bajonye_o.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/01_05_bajonye_o.mp3'),
+  },
+  {
+    kaudha: '𑄿',
+    maleSoundUrl: require('../assets/audios/male/02_01_chuchengye_kaa.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/02_01_chuchengye_kaa.mp3'),
+  },
+  {
+    kaudha: '𑄿',
+    maleSoundUrl: require('../assets/audios/male/02_02_gujongye_khaa.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/02_02_gujongye_khaa.mp3'),
+  },
+  {
+    kaudha: '𑄿',
+    maleSoundUrl: require('../assets/audios/male/02_03_chaindye_gaa.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/02_03_chaindye_gaa.mp3'),
+  },
+  {
+    kaudha: '𑄿',
+    maleSoundUrl: require('../assets/audios/male/02_04_tindeilye_ghaa.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/02_04_tindeilye_ghaa.mp3'),
+  },
+  {
+    kaudha: '𑄿',
+    maleSoundUrl: require('../assets/audios/male/02_05_chilemo_ngya.mp3'),
+    femaleSoundUrl: require('../assets/audios/female/02_05_chilemo_ngya.mp3'),
+  },
+];
+
+export default function AudioPage() {
+  const [inputText, setInputText] = useState('');
+
+  const playRandomAudio = async () => {
+    const randomIndex = Math.floor(Math.random() * alphabets.length);
+    const file = alphabets[randomIndex].maleSoundUrl;
+
+    const { sound } = await Audio.Sound.createAsync(file);
+    await sound.playAsync();
+  };
+
+  const handleChakmaKeyPress = (char: string) => {
+    setInputText((prev) => prev + char);
   };
 
   return (
     <View style={styles.container}>
-      {/* Heading */}
-      <Text style={styles.header}>AUDIO</Text>
+      <Text style={styles.header}>AUDIO PRACTICE</Text>
 
-      {/* Glassy Box */}
       <View style={styles.glassyBox}>
-        {/* Speaker Icon and Text */}
+        {/* Play Audio Button */}
         <View style={styles.speakerContainer}>
-          <MaterialCommunityIcons name="speaker" size={40} color="#000" />
-          <Text style={styles.speakerText}>Write the sentence after hearing the audio</Text>
+          <Pressable onPress={playRandomAudio} style={styles.playButton}>
+            <MaterialCommunityIcons name="play-circle-outline" size={50} color="#fff" />
+          </Pressable>
+          <Text style={styles.speakerText}>Tap the button to hear a random audio</Text>
         </View>
 
-        {/* Text Input Box */}
+        {/* Input */}
         <TextInput
           style={styles.textInput}
-          placeholder="Write what you heard..."
-          placeholderTextColor="#aaa"
-          value={text}
-          onChangeText={handleTextChange}
+          placeholder="Type what you heard..."
+          placeholderTextColor="#999"
+          value={inputText}
+          onChangeText={setInputText}
         />
       </View>
+
+      {/* Chakma Keyboard Grid */}
+      <FlatList
+  data={alphabets}
+  numColumns={numColumns}
+  keyExtractor={(item, index) => index.toString()}
+  contentContainerStyle={styles.keyboardGrid}
+  renderItem={({ item }) => (
+    <Pressable
+      style={[styles.keyButton, { width: keySize }]}
+      onPress={() => handleChakmaKeyPress(item.kaudha)}
+    >
+      <Text style={styles.keyText}>{item.kaudha}</Text>
+    </Pressable>
+  )}
+/>
+
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
     backgroundColor: '#fff',
+    paddingTop: 60,
+    paddingHorizontal: 20,
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#000',
+    alignSelf: 'center',
     marginBottom: 20,
   },
   glassyBox: {
-    backgroundColor: 'rgba(255, 255, 255, 0.7)', // Semi-transparent background
+    backgroundColor: 'rgba(0,0,0,0.05)',
     borderRadius: 15,
     padding: 20,
-    width: '90%',
-    maxWidth: 350,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 6,
+    marginBottom: 30,
   },
   speakerContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
     marginBottom: 15,
+  },
+  playButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 50,
+    padding: 10,
+    marginBottom: 10,
   },
   speakerText: {
     fontSize: 16,
     color: '#333',
-    marginLeft: 10,
+    textAlign: 'center',
   },
   textInput: {
-    height: 40,
+    marginTop: 10,
+    height: 50,
     borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 8,
     paddingHorizontal: 10,
-    fontSize: 16,
+    fontSize: 18,
     color: '#333',
-    marginTop: 10,
+  },
+  keyboardGrid: {
+    paddingVertical: 20,
+    alignItems: 'center',
+  },
+  keyButton: {
+    backgroundColor: '#E0E0E0',
+    aspectRatio: 1, // Makes it square
+    borderRadius: 10,
+    margin: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  
+  keyText: {
+    fontSize: 24,
   },
 });
-
-export default AudioPage;
