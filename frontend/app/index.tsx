@@ -42,6 +42,7 @@ export default function LoginScreen() {
             onChangeText={setPassword}
           />
 
+
           {/* ✅ Navigate to Home when Login is pressed */}
           <Link href="/(tabs)/Home" asChild>
             <TouchableOpacity style={styles.button}>
@@ -49,7 +50,16 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </Link>
 
-          <Text style={styles.guestText}>Continue as Guest</Text>
+          {/* ✅ Navigate to Signup when Signup is pressed */}
+          <Link href="/signup" asChild>
+            <TouchableOpacity style={styles.signupButton}>
+              <Text style={styles.signupButtonText}>Sign up</Text>
+            </TouchableOpacity>
+          </Link>
+
+          <Link href="/(tabs)/Home" asChild>
+            <Text style={styles.guestText}>Continue as Guest</Text>
+          </Link>
         </View>
       </View>
     </SafeAreaView>
@@ -102,6 +112,21 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
   },
+  signupButton: {
+    width: '100%',
+    backgroundColor: '#fff', // White background
+    borderWidth: 1, // Blue border
+    borderColor: '#007AFF',
+    paddingVertical: 14,
+    borderRadius: 10,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  signupButtonText: {
+    color: '#007AFF', // Blue text
+    fontSize: 18,
+    textAlign: 'center',
+  },
   buttonText: {
     color: '#fff',
     fontSize: 18,
@@ -109,7 +134,7 @@ const styles = StyleSheet.create({
   },
   guestText: {
     color: '#666',
-    fontSize: 14,
-    marginTop: 5,
+    fontSize: 16,
+    marginTop: 30,
   },
 });

@@ -137,7 +137,7 @@ export default function AudioPage() {
           <Pressable onPress={playRandomAudio} style={styles.playButton}>
             <MaterialCommunityIcons name="play-circle-outline" size={50} color="#fff" />
           </Pressable>
-          <Text style={styles.speakerText}>Tap the button to hear a random audio</Text>
+          <Text style={styles.speakerText}>Tap the button to hear a random alphabet</Text>
         </View>
 
         {/* Input */}

@@ -8,7 +8,6 @@
     "scheme": "kaudhatara",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.kaudha-tara",
@@ -23,7 +22,10 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.anonymous.kaudha_tara",
-      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -40,7 +42,9 @@
           "resizeMode": "contain",
           "backgroundColor": "#000000"
         }
-      ]
+      ],
+      "expo-audio",
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true
