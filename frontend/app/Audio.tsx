@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Pressable, FlatList } from 'react-native';
 import { Audio } from 'expo-av';
@@ -113,24 +114,28 @@ const alphabets = [
 ];
 
 export default function AudioPage() {
-  const [inputText, setInputText] = useState('');
+  const [inputText, setInputText] = useState(''); // State to track user input
 
+  // Function to play a random audio file
   const playRandomAudio = async () => {
-    const randomIndex = Math.floor(Math.random() * alphabets.length);
-    const file = alphabets[randomIndex].maleSoundUrl;
+    const randomIndex = Math.floor(Math.random() * alphabets.length); // Get a random index
+    const file = alphabets[randomIndex].maleSoundUrl; // Select the male audio file
 
-    const { sound } = await Audio.Sound.createAsync(file);
-    await sound.playAsync();
+    const { sound } = await Audio.Sound.createAsync(file); // Load the audio file
+    await sound.playAsync(); // Play the audio
   };
 
+  // Function to handle key press on the Chakma keyboard
   const handleChakmaKeyPress = (char: string) => {
-    setInputText((prev) => prev + char);
+    setInputText((prev) => prev + char); // Append the pressed character to the input text
   };
 
   return (
     <View style={styles.container}>
+      {/* Header Section */}
       <Text style={styles.header}>AUDIO PRACTICE</Text>
 
+      {/* Glassy Box for Audio and Input */}
       <View style={styles.glassyBox}>
         {/* Play Audio Button */}
         <View style={styles.speakerContainer}>
@@ -140,7 +145,7 @@ export default function AudioPage() {
           <Text style={styles.speakerText}>Tap the button to hear a random alphabet</Text>
         </View>
 
-        {/* Input */}
+        {/* Input Field */}
         <TextInput
           style={styles.textInput}
           placeholder="Type what you heard..."
@@ -152,58 +157,70 @@ export default function AudioPage() {
 
       {/* Chakma Keyboard Grid */}
       <FlatList
-  data={alphabets}
-  numColumns={numColumns}
-  keyExtractor={(item, index) => index.toString()}
-  contentContainerStyle={styles.keyboardGrid}
-  renderItem={({ item }) => (
-    <Pressable
-      style={[styles.keyButton, { width: keySize }]}
-      onPress={() => handleChakmaKeyPress(item.kaudha)}
-    >
-      <Text style={styles.keyText}>{item.kaudha}</Text>
-    </Pressable>
-  )}
-/>
-
+        data={alphabets} // Data for the keyboard
+        numColumns={numColumns} // Number of columns
+        keyExtractor={(item, index) => index.toString()} // Unique key for each item
+        contentContainerStyle={styles.keyboardGrid}
+        renderItem={({ item }) => (
+          <Pressable
+            style={[styles.keyButton, { width: keySize }]} // Dynamically sized key
+            onPress={() => handleChakmaKeyPress(item.kaudha)} // Handle key press
+          >
+            <Text style={styles.keyText}>{item.kaudha}</Text>
+          </Pressable>
+        )}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  // Main container for the screen
   container: {
     flex: 1,
     backgroundColor: '#fff',
     paddingTop: 60,
     paddingHorizontal: 20,
   },
+
+  // Header text style
   header: {
     fontSize: 24,
     fontWeight: 'bold',
     alignSelf: 'center',
     marginBottom: 20,
   },
+
+  // Glassy box for audio and input
   glassyBox: {
     backgroundColor: 'rgba(0,0,0,0.05)',
     borderRadius: 15,
     padding: 20,
     marginBottom: 30,
   },
+
+  // Container for the play audio button
   speakerContainer: {
     alignItems: 'center',
     marginBottom: 15,
   },
+
+  // Style for the play button
   playButton: {
     backgroundColor: '#007AFF',
     borderRadius: 50,
     padding: 10,
     marginBottom: 10,
   },
+
+  // Text below the play button
   speakerText: {
     fontSize: 16,
     color: '#333',
     textAlign: 'center',
   },
+
+  // Input field for user text
   textInput: {
     marginTop: 10,
     height: 50,
@@ -214,10 +231,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#333',
   },
+
+  // Grid container for the keyboard
   keyboardGrid: {
     paddingVertical: 20,
     alignItems: 'center',
   },
+
+  // Style for individual keys on the keyboard
   keyButton: {
     backgroundColor: '#E0E0E0',
     aspectRatio: 1, // Makes it square
@@ -226,7 +247,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
+
+  // Text style for the keys
   keyText: {
     fontSize: 24,
   },

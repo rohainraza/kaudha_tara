@@ -10,15 +10,15 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme(); // Detect light or dark mode
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'), // Load custom font
   });
 
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
 
   if (!loaded) {
-    return null;
+    return null; // Return null until fonts are loaded
   }
 
   return (
@@ -27,9 +27,8 @@ export default function RootLayout() {
         {/* Top-right Icon */}
         <View style={styles.topRightIcon}>
           <Pressable onPress={() => setModalVisible(true)}>
-            {/* Replace the source below with your own icon */}
             <Image
-              source={require('../assets/images/my_logo.png')} // 👈 your icon goes here
+              source={require('../assets/images/my_logo.png')} // App logo or icon
               style={styles.icon}
             />
           </Pressable>
@@ -37,25 +36,28 @@ export default function RootLayout() {
 
         {/* Main App Screens */}
         <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> {/* Tab navigation */}
+          <Stack.Screen name="+not-found" /> {/* Fallback screen */}
         </Stack>
 
-        {/* Modal Notice Box with Blur */}
+        {/* Modal Notice Box */}
         <Modal
           visible={modalVisible}
           transparent
           animationType="fade"
-          onRequestClose={() => setModalVisible(false)}
+          onRequestClose={() => setModalVisible(false)} // Close modal on request
         >
           <BlurView intensity={80} tint="light" style={styles.blurContainer}>
             <View style={styles.modalContent}>
-              {/* You can add your custom notice text here */}
-              <Text style={styles.noticeText}>Welcome to KaudhaTara – Your Native Language Learning Companion!
+              {/* Modal Content */}
+              <Text style={styles.noticeText}>
+                Welcome to KaudhaTara – Your Native Language Learning Companion!
                 KaudhaTara is a fun and interactive mobile app designed to help you learn and preserve the Chakma language through engaging activities like alphabet lessons, audio practice, quizzes, daily challenges, and more. Whether you're a beginner or looking to improve, this app offers a child-friendly interface, gamified learning, and real-time progress tracking to make language learning enjoyable and effective.
 
-🧠 Learn. 🎯 Practice. 🏆 Achieve.</Text>
+                🧠 Learn. 🎯 Practice. 🏆 Achieve.
+              </Text>
 
+              {/* Close Button */}
               <Pressable onPress={() => setModalVisible(false)} style={styles.closeButton}>
                 <Text style={styles.closeText}>Close</Text>
               </Pressable>
@@ -63,6 +65,7 @@ export default function RootLayout() {
           </BlurView>
         </Modal>
 
+        {/* Status Bar */}
         <StatusBar style="auto" />
       </View>
     </ThemeProvider>
@@ -70,25 +73,34 @@ export default function RootLayout() {
 }
 
 const styles = StyleSheet.create({
+  // Main container for the layout
   container: {
     flex: 1,
     backgroundColor: 'rgb(255, 255, 255)',
   },
+
+  // Top-right icon container
   topRightIcon: {
     position: 'absolute',
-    top: 50, // adjust for iPhone notch
+    top: 50, // Adjust for iPhone notch
     right: 20,
     zIndex: 999,
   },
+
+  // Icon style
   icon: {
     width: 28,
     height: 28,
   },
+
+  // Blur container for the modal
   blurContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  // Modal content container
   modalContent: {
     backgroundColor: 'white',
     borderRadius: 12,
@@ -97,12 +109,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 5,
   },
+
+  // Text inside the modal
   noticeText: {
     fontSize: 18,
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: 16,
   },
+
+  // Close button style
   closeButton: {
     marginTop: 8,
     paddingVertical: 8,
@@ -110,6 +126,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#007AFF',
     borderRadius: 8,
   },
+
+  // Close button text style
   closeText: {
     color: 'white',
     fontWeight: 'bold',

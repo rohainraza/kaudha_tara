@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, TouchableOpacity } from 'react-native';
 import { Audio } from 'expo-av';
@@ -107,21 +108,22 @@ const alphabets = [
   ];
 
   export default function AlphabetScreen() {
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const [currentIndex, setCurrentIndex] = useState(0); // State to track the selected alphabet
   
+    // Function to play audio for the selected alphabet
     const playSound = async (file: any) => {
       const { sound } = await Audio.Sound.createAsync(file);
       await sound.playAsync();
     };
   
-    const currentAlphabet = alphabets[currentIndex];
+    const currentAlphabet = alphabets[currentIndex]; // Get the currently selected alphabet
   
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        {/* Current Selected Alphabet */}
+        {/* Display the currently selected alphabet */}
         <Text style={styles.alphabet}>{currentAlphabet.kaudha}</Text>
   
-        {/* Male & Female Audio Buttons */}
+        {/* Buttons to play male and female audio */}
         <View style={styles.buttonContainer}>
           <Pressable style={styles.button} onPress={() => playSound(currentAlphabet.maleSoundUrl)}>
             <Text style={styles.buttonText}>Male Voice</Text>
@@ -131,7 +133,7 @@ const alphabets = [
           </Pressable>
         </View>
   
-        {/* Horizontal scroll inside vertical scroll */}
+        {/* Horizontal scrollable list of alphabets */}
         <View style={styles.horizontalWrapper}>
           <ScrollView
             horizontal
@@ -143,14 +145,14 @@ const alphabets = [
                 key={index}
                 style={[
                   styles.alphabetButton,
-                  index === currentIndex && styles.activeAlphabetButton,
+                  index === currentIndex && styles.activeAlphabetButton, // Highlight the selected alphabet
                 ]}
-                onPress={() => setCurrentIndex(index)}
+                onPress={() => setCurrentIndex(index)} // Update the selected alphabet
               >
                 <Text
                   style={[
                     styles.alphabetButtonText,
-                    index === currentIndex && styles.activeAlphabetText,
+                    index === currentIndex && styles.activeAlphabetText, // Highlight the text of the selected alphabet
                   ]}
                 >
                   {item.kaudha}
@@ -164,39 +166,53 @@ const alphabets = [
   }
   
   const styles = StyleSheet.create({
+    // Main container for the screen
     container: {
       alignItems: 'center',
       paddingVertical: 120,
-      //backgroundColor: '#FCFCFC',
     },
+  
+    // Style for the currently selected alphabet
     alphabet: {
       fontSize: 150,
       marginBottom: 40,
     },
+  
+    // Container for the audio buttons
     buttonContainer: {
       flexDirection: 'row',
       gap: 20,
       marginBottom: 100,
     },
+  
+    // Style for individual audio buttons
     button: {
       backgroundColor: '#007AFF',
       paddingVertical: 18,
       paddingHorizontal: 25,
       borderRadius: 10,
     },
+  
+    // Text style for the audio buttons
     buttonText: {
       color: 'white',
       fontWeight: 'bold',
     },
+  
+    // Wrapper for the horizontal scrollable list
     horizontalWrapper: {
       width: '100%',
       paddingLeft: 10,
       paddingRight: 10,
     },
+  
+    // Container for the scrollable list
     scrollContainer: {
       flexDirection: 'row',
       alignItems: 'center',
     },
+  
+    // Style for individual alphabet buttons
     alphabetButton: {
       backgroundColor: '#E0E0E0',
       borderRadius: 8,
@@ -204,12 +220,18 @@ const alphabets = [
       paddingHorizontal: 20,
       marginHorizontal: 4,
     },
+  
+    // Text style for the alphabet buttons
     alphabetButtonText: {
       fontSize: 35,
     },
+  
+    // Style for the selected alphabet button
     activeAlphabetButton: {
       backgroundColor: '#007AFF',
     },
+  
+    // Text style for the selected alphabet button
     activeAlphabetText: {
       color: 'white',
       fontWeight: 'bold',

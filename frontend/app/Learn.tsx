@@ -146,46 +146,57 @@ export const learnContent = [
     ];
             
       
-      const LearnPage = () => {
 
-  return (
-    <ScrollView style={styles.container}>
-      {learnContent.map((item, index) => (
-        <View key={index} style={styles.faqItem}>
-          <Text style={styles.question}>{item.question}</Text>
-          <Text style={styles.answer}>{item.answer}</Text>
-          {index < learnContent.length - 1 && <View style={styles.divider} />}
-        </View>
-      ))}
-    </ScrollView>
-  );
-};
-
-export default LearnPage;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding: 20,
-  },
-  faqItem: {
-    marginBottom: 20,
-  },
-  question: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000',
-    marginBottom: 10,
-  },
-  answer: {
-    fontSize: 16,
-    color: '#333',
-    lineHeight: 22,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#ccc',
-    marginTop: 20,
-  },
-});
+    const LearnPage = () => {
+      return (
+        <ScrollView style={styles.container}>
+          {/* Render each FAQ item */}
+          {learnContent.map((item, index) => (
+            <View key={index} style={styles.faqItem}>
+              <Text style={styles.question}>{item.question}</Text>
+              <Text style={styles.answer}>{item.answer}</Text>
+              {index < learnContent.length - 1 && <View style={styles.divider} />} {/* Divider between items */}
+            </View>
+          ))}
+        </ScrollView>
+      );
+    };
+    
+    export default LearnPage;
+    
+    const styles = StyleSheet.create({
+      // Main container for the screen
+      container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        padding: 20,
+      },
+    
+      // Style for each FAQ item
+      faqItem: {
+        marginBottom: 20,
+      },
+    
+      // Style for the question text
+      question: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#000',
+        marginBottom: 10,
+      },
+    
+      // Style for the answer text
+      answer: {
+        fontSize: 16,
+        color: '#333',
+        lineHeight: 22,
+      },
+    
+      // Divider between FAQ items
+      divider: {
+        height: 1,
+        backgroundColor: '#ccc',
+        marginTop: 20,
+      },
+    });
+    
