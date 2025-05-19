@@ -18,14 +18,14 @@ const QuizPage = () => {
   const handleOptionPress = (selectedOption: string) => {
     if (currentQuestion) {
       if (selectedOption === currentQuestion.correctAnswer) {
-        setFeedbackImage(require('../assets/images/tick.gif')); // Show tick GIF
+        setFeedbackImage(require('../../assets/images/tick.gif')); // Show tick GIF
         setCorrectAnswerIds((prev) => [...prev, currentQuestion.id]); // Add the question ID to the correct answers list
         setTimeout(() => {
           setFeedbackImage(null); // Hide feedback image after 1 second
           setIsModalVisible(false); // Close the modal
         }, 1000);
       } else {
-        setFeedbackImage(require('../assets/images/wrong.png')); // Show wrong PNG
+        setFeedbackImage(require('../../assets/images/wrong.png')); // Show wrong PNG
       }
     }
   };

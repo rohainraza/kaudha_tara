@@ -14,10 +14,14 @@ app.use(express.json()); // Needed to parse JSON from POST requests
 app.use('/audios', express.static(path.join(__dirname, 'public/audios')));
 
 // ---------- Routes ----------
-app.use('/api', require('./routes/signup'));
+app.use('/api/signup', require('./routes/signup'));
 app.use('/alphabets', require('./routes/alphabets'));
-app.use('/progress', require('./routes/progress')); // Route moved after middleware
+app.use('/progress', require('./routes/progress'));
 app.use('/api/users/location', require('./routes/location'));
+
+const userRoutes = require('./routes/user.routes');
+app.use('/api/user', userRoutes); // Example: /api/user/1
+
 // ---------- Crash & Exit Handlers ----------
 process.on('uncaughtException', (err) => {
   console.error('UNCAUGHT EXCEPTION:', err.stack || err);
@@ -42,6 +46,7 @@ db.sequelize.sync({ alter: true })
   .then(() => {
     console.log('Tables synced');
 
+    // Keep DB alive
     setInterval(() => {
       db.sequelize.query('SELECT 1')
         .then(() => console.log('DB connection alive'))

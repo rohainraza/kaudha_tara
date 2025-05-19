@@ -1,161 +1,190 @@
-import { Link } from 'expo-router';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  TextInput,
+  ActivityIndicator,
   Image,
-  SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
+  Alert,
+  ScrollView,
 } from 'react-native';
+import axios from 'axios';
 
-export default function SignupScreen() {
+const SignupPage = () => {
+  const [loading, setLoading] = useState(false);
+
+  // Form states
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+
+  const handleSignup = async () => {
+    if (password !== confirmPassword) {
+      Alert.alert("Passwords don't match");
+      return;
+    }
+
+    if (!firstName || !lastName || !email || !password || !dateOfBirth) {
+      Alert.alert('Please fill in all fields');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post('http://192.168.1.171:8000/api/signup', {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        password,
+        confirmPassword,
+        date_of_birth: dateOfBirth,
+      });
+
+      Alert.alert('Signup successful!');
+      setFirstName('');
+      setLastName('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+      setDateOfBirth('');
+      router.replace('/');
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error('Signup error:', err.message);
+      } else {
+        console.error('Unexpected error:', err);
+      }
+      Alert.alert('Signup failed. Try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        {/* Logo */}
-        <Image
-          source={require('../assets/images/my_logo.png')} // Adjust the path if needed
-          style={styles.logo}
-        />
-        {/* Heading */}
-        <Text style={styles.heading}>Create Your Account</Text>
-
-        {/* Input Fields */}
-        <View style={styles.inputRow}>
-          <TextInput
-            placeholder="First Name"
-            placeholderTextColor="#888"
-            style={[styles.input, styles.halfInput]}
-            value={firstName}
-            onChangeText={setFirstName}
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.profileHeader}>
+          <Image
+            source={require('../assets/images/profile.jpeg')}
+            style={styles.profilePicture}
           />
-          <TextInput
-            placeholder="Last Name"
-            placeholderTextColor="#888"
-            style={[styles.input, styles.halfInput]}
-            value={lastName}
-            onChangeText={setLastName}
-          />
+          <Text style={styles.name}>Create Your Account</Text>
         </View>
+
+        <TextInput
+          placeholder="First Name"
+          value={firstName}
+          onChangeText={setFirstName}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Last Name"
+          value={lastName}
+          onChangeText={setLastName}
+          style={styles.input}
+        />
         <TextInput
           placeholder="Email"
-          placeholderTextColor="#888"
-          style={styles.input}
-          keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
+          style={styles.input}
+          keyboardType="email-address"
           autoCapitalize="none"
         />
         <TextInput
           placeholder="Password"
-          placeholderTextColor="#888"
-          style={styles.input}
-          secureTextEntry
           value={password}
           onChangeText={setPassword}
+          secureTextEntry
+          textContentType="oneTimeCode"
+          autoComplete="off"
+          style={styles.input}
         />
         <TextInput
           placeholder="Confirm Password"
-          placeholderTextColor="#888"
-          style={styles.input}
-          secureTextEntry
           value={confirmPassword}
           onChangeText={setConfirmPassword}
+          secureTextEntry
+          textContentType="oneTimeCode"
+          autoComplete="off"
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Date of Birth (YYYY-MM-DD)"
+          value={dateOfBirth}
+          onChangeText={setDateOfBirth}
+          style={styles.input}
         />
 
-        {/* Signup Button */}
-        <TouchableOpacity style={styles.signupButton}>
-          <Text style={styles.signupButtonText}>Sign Up</Text>
+        <TouchableOpacity style={styles.button} onPress={handleSignup}>
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Sign Up</Text>
+          )}
         </TouchableOpacity>
 
-        {/* Sign In Link */}
-        <View style={styles.signInContainer}>
-          <Text style={styles.signInText}>Have an account? </Text>
-          <Link href="/" asChild>
-            <Text style={styles.signInLink}>SIGN IN</Text>
-          </Link>
-        </View>
-      </View>
-    </SafeAreaView>
+        <Text style={{ marginTop: 10 }}>
+          Have an account?{' '}
+          <Text style={{ color: '#007AFF', textDecorationLine: 'underline' }}>SIGN IN</Text>
+        </Text>
+      </ScrollView>
+    </View>
   );
-}
+};
+
+export default SignupPage;
 
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
     backgroundColor: '#fff',
   },
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    justifyContent: 'center',
+  scrollContent: {
     alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 50,
+    paddingBottom: 100,
   },
-  logo: {
-    width: 120,
-    height: 120,
-    resizeMode: 'contain',
-    marginBottom: 20,
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000',
+  profileHeader: {
+    alignItems: 'center',
     marginBottom: 30,
-    textAlign: 'center',
   },
-  inputRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 15,
+  profilePicture: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 10,
+  },
+  name: {
+    fontSize: 22,
+    fontWeight: 'bold',
   },
   input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 12,
     width: '100%',
-    height: 50,
-    backgroundColor: '#f2f2f2',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    fontSize: 16,
-    color: '#000',
-    marginBottom: 15,
+    backgroundColor: '#fff',
   },
-  halfInput: {
-    width: '48%',
-  },
-  signupButton: {
-    width: '100%',
+  button: {
     backgroundColor: '#007AFF',
-    paddingVertical: 14,
+    paddingVertical: 15,
     borderRadius: 10,
+    width: '80%',
+    alignItems: 'center',
     marginTop: 10,
-    marginBottom: 20,
   },
-  signupButtonText: {
+  buttonText: {
     color: '#fff',
     fontSize: 18,
-    textAlign: 'center',
-  },
-  signInContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  signInText: {
-    fontSize: 16,
-    color: '#666',
-  },
-  signInLink: {
-    fontSize: 16,
-    color: '#007AFF',
-    fontWeight: 'bold',
   },
 });
