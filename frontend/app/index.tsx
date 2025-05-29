@@ -11,6 +11,16 @@ import {
   View,
 } from 'react-native';
 
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+
+import '../../../firebase.js';
+
+const{firebaseConfig} = require('../../../firebase.js')
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app)
+
 export default function LoginScreen() {
   const [email, setEmail] = useState(''); // State for email input
   const [password, setPassword] = useState(''); // State for password input
